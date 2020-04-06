@@ -53,7 +53,7 @@ Using this table, following statements are executed:
 ```
 * Select of the 100K records.
 
-The whole benchmark is executed 10 times and runtime and CPU time of each operation is measured. The CPU time is measured for the process as a whole, which also includes CPU time of garbage collection running in parallel. As a result, the CPU time may be higher thatn runtime.
+The whole benchmark is executed 10 times and runtime and CPU time of each operation is measured. The CPU time is measured for the process as a whole, which also includes CPU time of garbage collection running in parallel. As a result, the CPU time may be higher than runtime.
 
 # Results
 Both Node.js and Java need some time to initialize, JIT the code, connect to DB etc. As a result, when a statement is executed for the first time, its runtime is much higher. To handle this situation, the slowest runtime of each statement is discarded before processing the results. The remaining runtimes are used to calculate average with the results presented in the following table. The same applies to CPU times.
