@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "mssql": "^6.2.0"
+  },
+  "name": "mssql-perf",
+  "code": "mssql-perf",
+  "version": "0.0.1"
+}
