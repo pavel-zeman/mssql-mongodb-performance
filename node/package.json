@@ -1,6 +1,7 @@
 {
   "dependencies": {
-    "mssql": "^6.2.0"
+    "mssql": "^6.2.0",
+    "mongodb": "^3.5.6"
   },
   "name": "mssql-perf",
   "code": "mssql-perf",

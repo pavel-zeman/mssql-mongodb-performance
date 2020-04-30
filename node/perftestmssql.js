@@ -10,6 +10,7 @@ function cpuTime() {
 }
 
 function getAverage(data) {
+  data = data.slice(10);
   data.sort();
   let result = 0;
   for(let i = 0; i < data.length - 2; i++) result += data[i];
@@ -28,9 +29,10 @@ function getAverage(data) {
         let insertsCpu = [];
         let updatesCpu = [];
         let selectsCpu = [];
-        for(let i = 0; i < 10; i++) {
+        for(let i = 0; i < 21; i++) {
           await sql.query`SET NOCOUNT ON`;
           await sql.query`truncate table tsdata`;
+          global.gc();
           
           // Insert
           let start = time();
@@ -47,6 +49,7 @@ function getAverage(data) {
           let request = new sql.Request(transaction);
           const inserted = await request.bulk(table);
           await transaction.commit();
+          global.gc();
           console.log(`Time to insert: ${time() - start} ${cpuTime() - startCpu}`);
           inserts.push(time() - start);
           insertsCpu.push(cpuTime() - startCpu);
@@ -81,6 +84,7 @@ function getAverage(data) {
             await ps.execute({value: i + 1, id: i});
           } */
           await transaction.commit();
+          global.gc();
           console.log(`Time to update: ${time() - start} ${cpuTime() - startCpu}`);
           updates.push(time() - start);
           updatesCpu.push(cpuTime() - startCpu);
@@ -93,6 +97,7 @@ function getAverage(data) {
           result.recordset.forEach(item => {
             rows.push({id: item.id, created: item.created, value: item.value});
           });
+          global.gc();
           console.log(`Selected ${rows.length} in ${time() - start} ${cpuTime() - startCpu}`);
           selects.push(time() - start);
           selectsCpu.push(cpuTime() - startCpu);
