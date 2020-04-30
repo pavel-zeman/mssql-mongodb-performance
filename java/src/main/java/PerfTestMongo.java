@@ -1,8 +1,5 @@
 import com.mongodb.MongoClient;
-import com.mongodb.client.model.Filters;
-import com.mongodb.client.model.UpdateOneModel;
-import com.mongodb.client.model.Updates;
-import com.mongodb.client.model.WriteModel;
+import com.mongodb.client.model.*;
 import org.bson.codecs.pojo.PojoCodecProvider;
 
 import java.io.IOException;
@@ -44,7 +41,7 @@ public class PerfTestMongo {
                 var item = new Item(i, new Date(1000000), ((double) i / 10));
                 data.add(item);
             }
-            collection.insertMany(data);
+            collection.insertMany(data, new InsertManyOptions().ordered(false));
             System.gc();
             System.out.println("Time to insert: " + sw.elapsed() + " " + sw.cpuElapsed());
             inserts.add(sw.elapsed());
@@ -56,7 +53,7 @@ public class PerfTestMongo {
             for (var i = 0; i < totalRows; i++) {
                 writes.add(new UpdateOneModel<>(Filters.eq("_id", i), Updates.set("value", (double) i / 5)));
             }
-            collection.bulkWrite(writes);
+            collection.bulkWrite(writes, new BulkWriteOptions().ordered(false));
             System.gc();
             System.out.println("Time to batch update: " + sw.elapsed() + " " + sw.cpuElapsed());
             batchUpdates.add(sw.elapsed());

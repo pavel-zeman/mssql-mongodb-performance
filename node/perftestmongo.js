@@ -46,7 +46,7 @@ function getAverage(data) {
           for(let i = 0; i < totalRows; i++) {
             data.push({_id: i, created: new Date(), value: i / 10.0});
           }
-          await collection.insertMany(data);
+          await collection.insertMany(data, {ordered: false});
           global.gc();
           console.log(`Time to insert: ${time() - start} ${cpuTime() - startCpu}`);
           inserts.push(time() - start);
@@ -60,7 +60,7 @@ function getAverage(data) {
           for(let i = 0; i < totalRows; i++) {
             ops.push({updateOne: { filter: { _id: i}, update: {"$set": {value: i / 5.0}}}});
           }
-          await collection.bulkWrite(ops);
+          await collection.bulkWrite(ops, {ordered: false});
           global.gc();
           
           console.log(`Time to update: ${time() - start} ${cpuTime() - startCpu}`);
