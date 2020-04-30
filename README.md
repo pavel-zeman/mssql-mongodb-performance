@@ -67,6 +67,7 @@ The whole benchmark is executed 21 times as follows:
 The benchmark for MongoDB is similar to SQL Server with the following differences:
 * A single collection with the documents of the following type is used for the test: `{ "_id" : 0, "created" : ISODate("1970-01-01T00:16:40Z"), "value" : 0 }`. The collection has only the default index on `_id`.
 * In Java, the API based on POJOs is used whenever possible (see https://mongodb.github.io/mongo-java-driver/3.5/driver/getting-started/quick-start-pojo/).
+* `ordered:false` is used for batch inserts and updates.
 
 # Results
 Both Node.js and Java need some time to initialize, JIT the code, connect to DB etc. As a result, when a statement is executed for the first time, its runtime is much higher. To handle this situation, the results of the first 10 executions of each operation are discarded to allow the virtual machines to warm-up. Out of the 11 remaining executions, the slowest one is ignored as well. The remaining runtimes are used to calculate average with the results presented below. The same applies to CPU times.
@@ -103,7 +104,7 @@ Times are shown in the following table and charts.
 Statement|Runtime Node.js [ms]|Runtime Java [ms]|Ratio of Node.js vs. Java|CPU time Node.js [ms]|CPU time Java [ms]|Ratio of CPU time of Node.js vs. Java
 ---------|--------------------|-----------------|-------------------------|---------------------|------------------|------------------------------------
 Insert|1032|798|1.29|519|310|1.67
-Update|5847|5564|1.05|1090|1583|0.69
+Update|5691|5564|1.02|910|1530|0.59
 Select|498|203|2.45|472|178|2.65
 
 ![Runtime](https://docs.google.com/spreadsheets/d/e/2PACX-1vQXyZpQW_Vr9obKpXbWkjdKUgTXPN4hq-zk5yiM1pbA5FXBnBWninDnzFszI4QVYueGr6DRea7-ulvZ/pubchart?oid=2104507486&format=image) 
