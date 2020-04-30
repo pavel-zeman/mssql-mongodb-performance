@@ -132,4 +132,4 @@ Having the results for both databases allows us to compare the databases themsel
   * Java consumes about 1.5 times more memory than Node.js.
 * SQL Server vs. MongoDB
  * SQL Server is clear winner here. You get, what you pay for.
- * While data reads are almost comparable (MongoDB is only about 40% slower), data modifications in MongoDB are many times (3 to 6) slower for MongoDB.
+ * While data reads are almost comparable (MongoDB is only about 40% slower), data modifications in MongoDB are many times (3 to 6) slower.
