@@ -134,3 +134,6 @@ Having the results for both databases allows us to compare the databases themsel
 * SQL Server vs. MongoDB
  * SQL Server is clear winner here. You get, what you pay for.
  * While data reads are almost comparable (MongoDB is only about 40% slower), data modifications in MongoDB are many times (3 to 6) slower.
+
+# Data
+All the data is available in https://docs.google.com/spreadsheets/d/19D_rEXn93NQAmhwgZyocs6_GDpFub75RpRmxgr-hjMI/edit?usp=sharing.
