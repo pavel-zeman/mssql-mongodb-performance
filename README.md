@@ -41,7 +41,7 @@ create table tsdata(
 
 Using this table, following statements are executed:
 * Truncate of the table to make sure that it is empty.
-* Insert of 100K records. The records are inserted using SQL Server-specific bulk operation. In Java, standard JDBC batching could be used as well, but based on the measurements the bulk operation is many (about 6 to 7) times faster.
+* Insert of 100K records. The records are inserted using SQL Server-specific bulk operation. In Java, standard JDBC batching could be used as well, but based on the measurements the bulk operation is many (about 6 to 7) times faster. In the results, the JDBC batching for Java is mentioned just for comparison.
 * Update of the 100K records. There are following update methods used:
   * Java supports batching. This can be used to prepare an update statement and execute it as a batch with 100K input records.
   * There is no batching supported in Node.js. In this case (and in Java as well so that we get comparable results), the update is done as follows:
@@ -85,6 +85,7 @@ Times are shown in the following table and charts.
 Statement|Runtime Node.js [ms]|Runtime Java [ms]|Ratio of Node.js vs. Java|CPU time Node.js [ms]|CPU time Java [ms]|Ratio of CPU time of Node.js vs. Java
 ---------|--------------------|-----------------|-------------------------|---------------------|------------------|------------------------------------
 Insert|968|256|3.78|1075|145|7.41
+Java batch insert|-|1463|-|-|748|-
 Update|1704|999|1.71|1075|53|20.28
 Select|584|145|4.03|796|210|3.79
 
