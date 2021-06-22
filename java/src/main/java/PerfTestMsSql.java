@@ -1,10 +1,15 @@
 import com.microsoft.sqlserver.jdbc.ISQLServerBulkData;
 import com.microsoft.sqlserver.jdbc.SQLServerBulkCopy;
 import com.microsoft.sqlserver.jdbc.SQLServerConnection;
-
 import java.io.IOException;
-import java.sql.*;
-import java.util.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Time;
+import java.sql.Types;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 
 /**
@@ -82,10 +87,12 @@ public class PerfTestMsSql {
         var totalRows = 100000;
         var first = true;
         var inserts = new ArrayList<Long>();
+        var batchInserts = new ArrayList<Long>();
         var updates = new ArrayList<Long>();
         var batchUpdates = new ArrayList<Long>();
         var selects = new ArrayList<Long>();
         var insertsCpu = new ArrayList<Long>();
+        var batchInsertsCpu = new ArrayList<Long>();
         var updatesCpu = new ArrayList<Long>();
         var batchUpdatesCpu = new ArrayList<Long>();
         var selectsCpu = new ArrayList<Long>();
@@ -109,17 +116,32 @@ public class PerfTestMsSql {
                 // Insert rows
                 var sw = StopWatch.startNew();
                 // This code uses generic JDBC API to insert data - this API is quite slow compared to native BCP
-//                try (var pstmt = con.prepareStatement("insert into tsdata(id, created, value) values(?, ?, ?)")) {
-//                    // Add rows to a batch in a loop. Each iteration adds a new row
-//                    for (var i = 0; i < totalRows; i++) {
-//                        // Add each parameter to the row.
-//                        pstmt.setInt(1, i);
-//                        pstmt.setTime(2, new Time(1000000));
-//                        pstmt.setDouble(3, i);
-//                        pstmt.addBatch();
-//                    }
-//                    pstmt.executeBatch();
-//                }
+                try (var pstmt = con.prepareStatement("insert into tsdata(id, created, value) values(?, ?, ?)")) {
+                    // Add rows to a batch in a loop. Each iteration adds a new row
+                    for (var i = 0; i < totalRows; i++) {
+                        // Add each parameter to the row.
+                        pstmt.setInt(1, i);
+                        pstmt.setTime(2, new Time(1000000));
+                        pstmt.setDouble(3, i);
+                        pstmt.addBatch();
+                    }
+                    pstmt.executeBatch();
+                }
+                con.commit();
+                System.gc();
+                System.out.println("Time to batch insert: " + sw.elapsed() + " " + sw.cpuElapsed());
+                batchInserts.add(sw.elapsed());
+                batchInsertsCpu.add(sw.cpuElapsed());
+
+                // Remove all data
+                try (var statement = con.createStatement()) {
+                    statement.execute("truncate table tsdata");
+                }
+                con.commit();
+                System.gc();
+
+                // Insert using bulk copy
+                sw = StopWatch.startNew();
                 try (var bc = new SQLServerBulkCopy(con)) {
                     var data = new BulkData(totalRows);
                     data.addColumn("id", Types.INTEGER, 0, 0);
@@ -201,6 +223,7 @@ public class PerfTestMsSql {
         catch (SQLException e) {
             e.printStackTrace();
         }
+        System.out.println("Average batch insert: " + PerfTest.getAverage(batchInserts) + " " + PerfTest.getAverage(batchInsertsCpu));
         System.out.println("Average insert: " + PerfTest.getAverage(inserts) + " " + PerfTest.getAverage(insertsCpu));
         System.out.println("Average update: " + PerfTest.getAverage(updates) + " " + PerfTest.getAverage(updatesCpu));
         System.out.println("Average batch update: " + PerfTest.getAverage(batchUpdates) + " " + PerfTest.getAverage(batchUpdatesCpu));
